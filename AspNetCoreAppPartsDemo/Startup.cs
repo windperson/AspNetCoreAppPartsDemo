@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using PartControllerLib;
 
 namespace AspNetCoreAppPartsDemo
 {
@@ -32,7 +38,30 @@ namespace AspNetCoreAppPartsDemo
             });
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .ConfigureApplicationPartManager(apm =>
+                {
+                    var partLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "PartControllerLib");
+                    if (partLib == null)
+                    {
+                        var assembly = typeof(MyPartController).GetTypeInfo().Assembly;
+                        partLib = new AssemblyPart(assembly);
+                        apm.ApplicationParts.Add(partLib);
+                    }
+
+                    var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "ListFeatureLib");
+                    if (listFeatureLib == null)
+                    {
+                        var assembly = typeof(ListFeatureLib.ListFeaturesController).GetTypeInfo().Assembly;
+                        listFeatureLib = new AssemblyPart(assembly);
+                        apm.ApplicationParts.Add(listFeatureLib);
+                    }
+                });
+
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.FileProviders.Add(new EmbeddedFileProvider(typeof(ListFeatureLib.ListFeaturesController).GetTypeInfo().Assembly));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
