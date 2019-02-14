@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using ListFeatureLib;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -49,19 +50,9 @@ namespace AspNetCoreAppPartsDemo
                         apm.ApplicationParts.Add(partLib);
                     }
 
-                    var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "ListFeatureLib");
-                    if (listFeatureLib == null)
-                    {
-                        var assembly = typeof(ListFeatureLib.ListFeaturesController).GetTypeInfo().Assembly;
-                        listFeatureLib = new AssemblyPart(assembly);
-                        apm.ApplicationParts.Add(listFeatureLib);
-                    }
-                });
+                }).AddListFeaturesPageApplicationPart();
 
-            services.Configure<RazorViewEngineOptions>(options =>
-            {
-                options.FileProviders.Add(new EmbeddedFileProvider(typeof(ListFeatureLib.ListFeaturesController).GetTypeInfo().Assembly));
-            });
+            services.AddListFeaturesRazorPage();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
