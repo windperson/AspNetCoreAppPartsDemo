@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using PartClassLib;
 using PartControllerLib;
 
 namespace AspNetCoreAppPartsDemo
@@ -50,9 +51,12 @@ namespace AspNetCoreAppPartsDemo
                         apm.ApplicationParts.Add(partLib);
                     }
 
-                }).AddListFeaturesPageApplicationPart();
+                })
+                .AddPartClassLibDemoApplicationPart()
+                .AddListFeaturesPageApplicationPart();
 
-            services.AddListFeaturesRazorPage();            
+            services.AddPartClassLibDemoRazorPage()
+                .AddListFeaturesRazorPage();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

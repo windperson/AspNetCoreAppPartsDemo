@@ -36,10 +36,11 @@ namespace ListFeatureLib
 
             builder.ConfigureApplicationPartManager(apm =>
             {
-                var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "ListFeatureLib");
+                var assembly = typeof(ListFeaturesController).GetTypeInfo().Assembly;
+
+                var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == assembly.GetName().Name);
                 if (listFeatureLib == null)
                 {
-                    var assembly = typeof(ListFeaturesController).GetTypeInfo().Assembly;
                     listFeatureLib = new AssemblyPart(assembly);
                     apm.ApplicationParts.Add(listFeatureLib);
                 }
