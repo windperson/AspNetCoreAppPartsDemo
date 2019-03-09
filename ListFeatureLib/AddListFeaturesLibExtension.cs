@@ -11,30 +11,14 @@ namespace ListFeatureLib
     public static class AddListFeaturesLibExtension
     {
         // ReSharper disable once UnusedMember.Global
-        public static IServiceCollection AddListFeaturesRazorPage(this IServiceCollection services)
+        public static IServiceCollection AddListFeaturesModule(this IServiceCollection services)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.Configure<RazorViewEngineOptions>(options =>
-            {
-                options.FileProviders.Add(new EmbeddedFileProvider(typeof(ListFeaturesController).GetTypeInfo().Assembly));
-            });
-
-            return services;
-        }
-
-        // ReSharper disable once UnusedMember.Global
-        public static IMvcBuilder AddListFeaturesPageApplicationPart(this IMvcBuilder builder)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            builder.ConfigureApplicationPartManager(apm =>
+            services.AddMvcCore().ConfigureApplicationPartManager(apm =>
             {
                 var assembly = typeof(ListFeaturesController).GetTypeInfo().Assembly;
 
@@ -46,7 +30,12 @@ namespace ListFeatureLib
                 }
             });
 
-            return builder;
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.FileProviders.Add(new EmbeddedFileProvider(typeof(ListFeaturesController).GetTypeInfo().Assembly));
+            });
+
+            return services;
         }
     }
 }

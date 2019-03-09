@@ -39,7 +39,6 @@ namespace AspNetCoreAppPartsDemo
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .ConfigureApplicationPartManager(apm =>
                 {
@@ -52,11 +51,11 @@ namespace AspNetCoreAppPartsDemo
                     }
 
                 })
-                .AddPartClassLibDemoApplicationPart()
-                .AddListFeaturesPageApplicationPart();
+                .AddPartClassLibDemoApplicationPart();
 
-            services.AddPartClassLibDemoRazorPage()
-                .AddListFeaturesRazorPage();            
+            services.AddPartClassLibDemoRazorPage();
+
+            services.AddListFeaturesModule();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
