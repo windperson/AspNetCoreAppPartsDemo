@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace PartClassLib
 {
@@ -19,7 +17,8 @@ namespace PartClassLib
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.Configure<RazorViewEngineOptions>(options =>
+            //see: https://github.com/dotnet/AspNetCore.Docs/issues/14593#issuecomment-538792893
+            services.Configure<MvcRazorRuntimeCompilationOptions>(options =>
             {
                 options.FileProviders.Add(new EmbeddedFileProvider(typeof(NetCoreLibDemoController).GetTypeInfo().Assembly));
             });
