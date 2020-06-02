@@ -32,19 +32,28 @@ namespace AspNetCoreAppPartsDemo
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //NOTE: Although asp.net core 3.x has auto loadning application part feature, 
+            //      It is not recommand to use that coding style when using some non-open sourced or untrusted 3rd party lib(s).
+            //      See: https://blog.burgyn.online/2019/12/16/asp-net-core-applicationPart-evilController.html
             services.AddControllersWithViews()
-                .ConfigureApplicationPartManager(apm =>
-                {
-                    var partLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "PartControllerLib");
-                    if (partLib == null)
-                    {
-                        var assembly = typeof(MyPartController).GetTypeInfo().Assembly;
-                        partLib = new AssemblyPart(assembly);
-                        apm.ApplicationParts.Add(partLib);
-                    }
+                //.ConfigureApplicationPartManager(apm => 
+                //{
+                //    apm.ApplicationParts.Clear();
+                //    apm.ApplicationParts.Add(new AssemblyPart(typeof(Startup).Assembly));
+                //})
+                //.ConfigureApplicationPartManager(apm =>
+                //{
+                //    var partLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == "PartControllerLib");
+                //    if (partLib == null)
+                //    {
+                //        var assembly = typeof(MyPartController).GetTypeInfo().Assembly;
+                //        partLib = new AssemblyPart(assembly);
+                //        apm.ApplicationParts.Add(partLib);
+                //    }
+                //})
+                //.AddPartClassLibDemoApplicationPart()
+                ;
 
-                })
-                .AddPartClassLibDemoApplicationPart();;
 
             services.AddRazorPages()
                     .AddRazorRuntimeCompilation(); //see: https://github.com/dotnet/AspNetCore.Docs/issues/14593#issuecomment-538792893

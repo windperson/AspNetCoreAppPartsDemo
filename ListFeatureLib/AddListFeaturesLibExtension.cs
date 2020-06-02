@@ -19,17 +19,19 @@ namespace ListFeatureLib
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddControllersWithViews().ConfigureApplicationPartManager(apm =>
-            {
-                var assembly = typeof(ListFeaturesController).GetTypeInfo().Assembly;
+            //Since .NET Core 3.0, auto Controller feature discovery & load is the default behavior
+            //See: https://andrewlock.net/when-asp-net-core-cant-find-your-controller-debugging-application-parts/
+            //services.AddControllersWithViews().ConfigureApplicationPartManager(apm =>
+            //{
+            //    var assembly = typeof(ListFeaturesController).GetTypeInfo().Assembly;
 
-                var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == assembly.GetName().Name);
-                if (listFeatureLib == null)
-                {
-                    listFeatureLib = new AssemblyPart(assembly);
-                    apm.ApplicationParts.Add(listFeatureLib);
-                }
-            });
+            //    var listFeatureLib = apm.ApplicationParts.FirstOrDefault(part => part.Name == assembly.GetName().Name);
+            //    if (listFeatureLib == null)
+            //    {
+            //        listFeatureLib = new AssemblyPart(assembly);
+            //        apm.ApplicationParts.Add(listFeatureLib);
+            //    }
+            //});
 
             //see: https://github.com/dotnet/AspNetCore.Docs/issues/14593#issuecomment-538792893
             services.Configure<MvcRazorRuntimeCompilationOptions>(options =>
