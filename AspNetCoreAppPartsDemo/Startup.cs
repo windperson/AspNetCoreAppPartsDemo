@@ -5,11 +5,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 using PartClassLib;
 using PartControllerLib;
+using TodoItemLib;
 
 namespace AspNetCoreAppPartsDemo
 {
@@ -59,7 +63,47 @@ namespace AspNetCoreAppPartsDemo
                     .AddRazorRuntimeCompilation(); //see: https://github.com/dotnet/AspNetCore.Docs/issues/14593#issuecomment-538792893
 
             services.AddPartClassLibDemoRazorPage();
+            services.AddTodoItemEfCoreConfiguration(opt =>
+            {
+                opt.UseInMemoryDatabase("TodoList");
+            });
             services.AddListFeaturesModule();
+
+            services.AddSwaggerDocument(config =>
+            {
+                config.GenerateExamples = true;
+                config.DocumentName = "v1";
+
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "ToDo API";
+                    document.Info.Description = "A simple ASP.NET Core web API";
+                    document.Info.TermsOfService = "None";
+                    document.Info.Contact = new NSwag.OpenApiContact
+                    {
+                        Name = "GranDen Corp.",
+                        Email = "info@granden.rocks",
+                        Url = "https://www.granden.rocks"
+                    };
+                    document.Info.License = new NSwag.OpenApiLicense
+                    {
+                        Name = "Use under MIT license",
+                        Url = "https://mit-license.org"
+                    };
+                };
+
+                var apiScheme = new OpenApiSecurityScheme()
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = "Copy this into the value field: Bearer {token}"
+                };
+
+                config.AddSecurity("JWT Token", Enumerable.Empty<string>(), apiScheme);
+                config.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT Token"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +125,10 @@ namespace AspNetCoreAppPartsDemo
             app.UseCookiePolicy();
 
             app.UseRouting();
+
+            // Register the Swagger generator and the Swagger UI middlewares
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {

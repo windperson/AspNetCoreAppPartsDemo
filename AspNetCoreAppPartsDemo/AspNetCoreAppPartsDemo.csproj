@@ -5,9 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NSwag.AspNetCore" Version="13.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ListFeatureLib\ListFeatureLib.csproj" />
     <ProjectReference Include="..\PartClassLibDemo\PartClassLibDemo.csproj" />
     <ProjectReference Include="..\PartControllerLib\PartControllerLib.csproj" />
+    <ProjectReference Include="..\TodoItemLib\TodoItemLib.csproj" />
   </ItemGroup>
 
 </Project>
